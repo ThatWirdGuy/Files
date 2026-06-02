@@ -107,65 +107,52 @@ body {
 
   <div class="gamesarea" id="gamesArea"></div>
 
-  <script>
-    const JSDELIVR_API = "https://data.jsdelivr.com/v1/package/gh/ThatWirdGuy/Files@main/flat";
-    const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
-    const GLOADER_URL = "https://thatwirdguy.github.io/Files/gloader.html";
+<script>
+const API = "https://api.github.com/repos/ThatWirdGuy/Files/contents/g";
+const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
+const GLOADER_URL = "https://thatwirdguy.github.io/Files/gloader.html";
 
-    async function loadGames() {
-      const response = await fetch(JSDELIVR_API);
-      const data = await response.json();
+async function loadGames() {
+  const res = await fetch(API);
+  const folders = await res.json();
 
-      console.log("All files:");
-      data.files.forEach(f => console.log(f.name));
+  const games = [];
 
-      const games = [];
+  for (const folder of folders) {
+    if (folder.type !== "dir") continue;
 
-      for (const file of data.files) {
-        const path = file.name;
+    const gameName = folder.name;
 
-        const match = path.match(/^\/g\/([^\/]+)\/image\.png$/i);
+    const imageUrl = `${CDN_BASE}/g/${gameName}/Image.png`;
 
-        if (match) {
-          const gameName = match[1];
+    games.push({
+      name: gameName,
+      imageUrl
+    });
+  }
 
-          games.push({
-            name: gameName,
-            imageUrl: CDN_BASE + path
-          });
-        }
-      }
+  return games;
+}
 
-      return games.sort((a, b) => a.name.localeCompare(b.name));
-    }
+loadGames().then(games => {
+  const area = document.getElementById("gamesArea");
 
-    loadGames()
-      .then(games => {
-        console.log("Games found:", games);
+  games.forEach(game => {
+    const card = document.createElement("a");
+    card.className = "GameObject";
+    card.href = `${GLOADER_URL}?game=${encodeURIComponent(game.name)}`;
 
-        const area = document.getElementById("gamesArea");
+    const title = document.createElement("h1");
+    title.textContent = game.name;
 
-        games.forEach(game => {
-          const card = document.createElement("a");
-          card.className = "GameObject";
-          card.href = `${GLOADER_URL}?game=${encodeURIComponent(game.name)}`;
+    const img = document.createElement("img");
+    img.src = game.imageUrl;
 
-          const title = document.createElement("h1");
-          title.textContent = game.name;
-
-          const img = document.createElement("img");
-          img.src = game.imageUrl;
-          img.alt = game.name;
-
-          card.appendChild(title);
-          card.appendChild(img);
-
-          area.appendChild(card);
-        });
-      })
-      .catch(error => {
-        console.error("Failed to load games:", error);
-      });
-  </script>
+    card.appendChild(title);
+    card.appendChild(img);
+    area.appendChild(card);
+  });
+});
+</script>
 </body>
 </html>
