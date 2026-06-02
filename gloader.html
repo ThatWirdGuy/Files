@@ -85,7 +85,7 @@
           document.title = gameName;
           document.getElementById("gameTitle").textContent = gameName;
          
-          const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/index.html`;
+          const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/index.html`;
           document.getElementById("gameFrame").src = gameUrl;
 
           document.getElementById("downloadBtn").addEventListener("click", () => {
