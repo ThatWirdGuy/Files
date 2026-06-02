@@ -55,22 +55,56 @@
       display: block;
       margin: 20px auto;
       border-radius: 20px;
+      border: none;
     }
     
   </style>
   <body>
       <div class="top">
-        <h1 class="Name">Game name</h1>
+        <h1 class="Name" id="gameTitle">Loading...</h1>
       </div>
     
       <div class="undertop">
-        <button class="download">Download</button>
-        <button class="fullscreen">Fullscreen</button>
-        <button class="back">Back</button>
+        <button class="download" id="downloadBtn">Download</button>
+        <button class="fullscreen" id="fullscreenBtn">Fullscreen</button>
+        <button class="back" onclick="history.back()">Back</button>
       </div>
     
       <div class="gamesarea"></div>
     
-      <iframe class="GameFrame"></iframe>
+      <iframe class="GameFrame" id="gameFrame" allowfullscreen></iframe>
+
+      <script>
+        const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
+
+        // Read the ?game= param from the URL
+        const params   = new URLSearchParams(window.location.search);
+        const gameName = params.get("game");
+
+        if (gameName) {
+          document.title = gameName;
+          document.getElementById("gameTitle").textContent = gameName;
+         
+          const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/index.html`;
+          document.getElementById("gameFrame").src = gameUrl;
+
+          document.getElementById("downloadBtn").addEventListener("click", () => {
+            window.open(gameUrl, "_blank");
+          });
+        } else {
+          document.getElementById("gameTitle").textContent = "No game selected";
+        }
+
+        document.getElementById("fullscreenBtn").addEventListener("click", () => {
+          const frame = document.getElementById("gameFrame");
+          if (frame.requestFullscreen) {
+            frame.requestFullscreen();
+          } else if (frame.webkitRequestFullscreen) {
+            frame.webkitRequestFullscreen();
+          } else if (frame.mozRequestFullScreen) {
+            frame.mozRequestFullScreen();
+          }
+        });
+      </script>
   </body>
 </html>
