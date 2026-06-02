@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+ <style>
+    body{
+     font-family: FreeMono, monospace;
+     background: #3b3b3b;
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+    }
+  
+    .top{
+      background-color: #303030;
+      width: 100vw;
+      height: 75px;
+      color: White;
+      display: flex;
+      align-items: flex-start;
+    }
+    
+    .undertop {
+      background-color: #2d2d2d;
+      width: 100vw;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .fullscreen, .download, .back {
+      background: #313131;
+      border: 3px solid #393939;
+      color: white;
+      height: 30px;
+      font-size: 17px;
+      border-radius: 10px;
+      transition: transform 0.15s ease, border 0.15s ease, background 0.15s ease;
+    }
+
+    .fullscreen { width: 110px; }
+    .download   { width: 110px; }
+    .back       { width: 100px; }
+    
+    .fullscreen:hover, .download:hover, .back:hover {
+      transform: scale(1.1);
+      border: 3px solid #424242;
+      background: #424242;
+      cursor: pointer;
+    }
+    
+    .GameFrame{
+      width: 80vw;
+      height: 65vh;
+      display: block;
+      margin: 20px auto;
+      border-radius: 20px;
+    }
+    
+  </style>
+  <body>
+      <div class="top">
+        <h1 class="Name">Game name</h1>
+      </div>
+    
+      <div class="undertop">
+        <button class="download">Download</button>
+        <button class="fullscreen">Fullscreen</button>
+        <button class="back">Back</button>
+      </div>
+    
+      <div class="gamesarea"></div>
+    
+      <iframe class="GameFrame"></iframe>
+  </body>
+</html>
