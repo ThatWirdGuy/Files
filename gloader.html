@@ -76,45 +76,40 @@
 
 <script>
   const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
-
-  const params   = new URLSearchParams(window.location.search);
-  const gameName = params.get("game");
-
-  if (gameName) {
-    document.title = gameName;
-    document.getElementById("gameTitle").textContent = gameName;
-
-    const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/index.html`;
-
-    fetch(gameUrl)
-      .then(res => res.text())
-      .then(html => {
-        const baseTag = `<base href="${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/">`;
-        const patched = html.replace("<head>", "<head>" + baseTag);
-        document.getElementById("gameFrame").srcdoc = patched;
-      })
-      .catch(() => {
-        document.getElementById("gameFrame").srcdoc = "<p style='color:red;font-family:monospace;padding:20px'>Failed to load game.</p>";
-      });
-
-    document.getElementById("downloadBtn").addEventListener("click", () => {
-      window.open(gameUrl, "_blank");
+const params = new URLSearchParams(window.location.search);
+const gameName = params.get("game");
+if (gameName) {
+  document.title = gameName;
+  document.getElementById("gameTitle").textContent = gameName;
+  const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/index.html`;
+  fetch(gameUrl)
+    .then(res => res.text())
+    .then(html => {
+      const absoluteBase = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/`;
+      const patched = html
+        .replace(/src="(?!https?:\/\/)([^"]+\.swf)"/gi, `src="${absoluteBase}$1"`)
+        .replace(/src='(?!https?:\/\/)([^']+\.swf)'/gi, `src='${absoluteBase}$1'`);
+      document.getElementById("gameFrame").srcdoc = patched;
+    })
+    .catch(() => {
+      document.getElementById("gameFrame").srcdoc = "<p style='color:red;font-family:monospace;padding:20px'>Failed to load game.</p>";
     });
-
-  } else {
-    document.getElementById("gameTitle").textContent = "No game selected";
-  }
-
-  document.getElementById("fullscreenBtn").addEventListener("click", () => {
-    const frame = document.getElementById("gameFrame");
-    if (frame.requestFullscreen) {
-      frame.requestFullscreen();
-    } else if (frame.webkitRequestFullscreen) {
-      frame.webkitRequestFullscreen();
-    } else if (frame.mozRequestFullScreen) {
-      frame.mozRequestFullScreen();
-    }
+  document.getElementById("downloadBtn").addEventListener("click", () => {
+    window.open(gameUrl, "_blank");
   });
+} else {
+  document.getElementById("gameTitle").textContent = "No game selected";
+}
+document.getElementById("fullscreenBtn").addEventListener("click", () => {
+  const frame = document.getElementById("gameFrame");
+  if (frame.requestFullscreen) {
+    frame.requestFullscreen();
+  } else if (frame.webkitRequestFullscreen) {
+    frame.webkitRequestFullscreen();
+  } else if (frame.mozRequestFullScreen) {
+    frame.mozRequestFullScreen();
+  }
+});
 </script>
   </body>
 </html>
