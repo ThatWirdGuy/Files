@@ -10,26 +10,36 @@
             padding: 0;
             overflow: hidden;
         }
-
-        .container {
+        #swf-container {
             width: 100vw;
             height: 100vh;
-            overflow: hidden;
         }
-
-        .swf {
+        #swf-container ruffle-player {
             width: 100%;
             height: 100%;
-            margin: 0;
-            padding: 0;
-            border: none;
         }
     </style>
 </head>
 <body>
     <script src="https://greys2121.github.io/RUFFFFFLE_EMBED/ruffle/ruffle.js"></script>
-    <div class="container">
-        <embed class="swf" pluginspage="http://www.macromedia.com/go/getflashplayer" src="https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main/g/TU-46/Files/tu-46.swf" type="application/x-shockwave-flash">
-    </div>
+    <script>
+        window.RufflePlayer = window.RufflePlayer || {};
+        window.RufflePlayer.config = {
+            autoplay: "on",
+            unmuteOverlay: "hidden"
+        };
+    </script>
+    <div id="swf-container"></div>
+    <script>
+        window.addEventListener("load", () => {
+            const ruffle = window.RufflePlayer.newest();
+            const player = ruffle.createPlayer();
+            const container = document.getElementById("swf-container");
+            container.appendChild(player);
+            player.style.width = "100%";
+            player.style.height = "100vh";
+            player.load("https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main/g/TU-46/Files/tu-46.swf");
+        });
+    </script>
 </body>
 </html>
