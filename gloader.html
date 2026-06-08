@@ -1,21 +1,31 @@
 <!DOCTYPE html>
-<html>
- <style>
-    body{
-     font-family: FreeMono, monospace;
-     background: #3b3b3b;
-     margin: 0;
-     padding: 0;
-     box-sizing: border-box;
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Player</title>
+  <style>
+    body {
+      font-family: FreeMono, monospace;
+      background: #3b3b3b;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
   
-    .top{
+    .top {
       background-color: #303030;
       width: 100vw;
       height: 75px;
       color: White;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
+      padding-left: 20px;
+      box-sizing: border-box;
+    }
+
+    .top h1 {
+      margin: 0;
     }
     
     .undertop {
@@ -49,7 +59,7 @@
       cursor: pointer;
     }
     
-    .GameFrame{
+    .GameFrame {
       width: 80vw;
       height: 70vh;
       display: block;
@@ -57,72 +67,61 @@
       border-radius: 20px;
       border: none;
     }
-    
   </style>
-  <body>
-      <div class="top">
-        <h1 class="Name" id="gameTitle">Loading...</h1>
-      </div>
-    
-      <div class="undertop">
-        <button class="download" id="downloadBtn">Download</button>
-        <button class="fullscreen" id="fullscreenBtn">Fullscreen</button>
-        <button class="back" onclick="history.back()">Back</button>
-      </div>
-    
-      <div class="gamesarea"></div>
-    
-      <iframe class="GameFrame" id="gameFrame" allowfullscreen></iframe>
-<script>
-const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
-const params = new URLSearchParams(window.location.search);
-const gameName = params.get("game");
+</head>
+<body>
 
-if (gameName) {
-    document.title = gameName;
-    document.getElementById("gameTitle").textContent = gameName;
+  <div class="top">
+    <h1 class="Name" id="gameTitle">Loading...</h1>
+  </div>
 
-    const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/index.html`;
+  <div class="undertop">
+    <button class="download" id="downloadBtn">Download</button>
+    <button class="fullscreen" id="fullscreenBtn">Fullscreen</button>
+    <button class="back" onclick="history.back()">Back</button>
+  </div>
 
-    document.getElementById("gameFrame").src = gameUrl;
+  <iframe class="GameFrame" id="gameFrame" allowfullscreen></iframe>
 
-    document.getElementById("downloadBtn").addEventListener("click", async () => {
-        try {
-            const response = await fetch(gameUrl);
-            const html = await response.text();
+  <script>
+    const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
+    const params = new URLSearchParams(window.location.search);
+    const gameName = params.get("game");
 
-            const blob = new Blob([html], { type: "text/html" });
-            const url = URL.createObjectURL(blob);
+    if (gameName) {
+        document.title = gameName;
+        document.getElementById("gameTitle").textContent = gameName;
+
+        const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/index.html`;
+        document.getElementById("gameFrame").src = gameUrl;
+
+        document.getElementById("downloadBtn").addEventListener("click", () => {
+            const zipUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/${encodeURIComponent(gameName)}.zip`;
 
             const a = document.createElement("a");
-            a.href = url;
-            a.download = `${gameName}.html`;
+            a.href = zipUrl;
+            a.download = `${gameName}.zip`;
 
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+        });
 
-            URL.revokeObjectURL(url);
-        } catch (err) {
-            console.error("Download failed:", err);
+    } else {
+        document.getElementById("gameTitle").textContent = "No game selected";
+    }
+
+    document.getElementById("fullscreenBtn").addEventListener("click", () => {
+        const frame = document.getElementById("gameFrame");
+
+        if (frame.requestFullscreen) {
+            frame.requestFullscreen();
+        } else if (frame.webkitRequestFullscreen) {
+            frame.webkitRequestFullscreen();
+        } else if (frame.mozRequestFullScreen) {
+            frame.mozRequestFullScreen();
         }
     });
-
-} else {
-    document.getElementById("gameTitle").textContent = "No game selected";
-}
-
-document.getElementById("fullscreenBtn").addEventListener("click", () => {
-    const frame = document.getElementById("gameFrame");
-
-    if (frame.requestFullscreen) {
-        frame.requestFullscreen();
-    } else if (frame.webkitRequestFullscreen) {
-        frame.webkitRequestFullscreen();
-    } else if (frame.mozRequestFullScreen) {
-        frame.mozRequestFullScreen();
-    }
-});
-</script>
-  </body>
+  </script>
+</body>
 </html>
