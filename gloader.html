@@ -75,163 +75,61 @@
       <iframe class="GameFrame" id="gameFrame" allowfullscreen></iframe>
 
 <script>
-  const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
+const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
 const params = new URLSearchParams(window.location.search);
 const gameName = params.get("game");
+
 if (gameName) {
   document.title = gameName;
   document.getElementById("gameTitle").textContent = gameName;
+
   const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/index.html`;
+
   fetch(gameUrl)
     .then(res => res.text())
     .then(html => {
       const absoluteBase = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/`;
+
       const patched = html
         .replace(/src="(?!https?:\/\/)([^"]+\.swf)"/gi, `src="${absoluteBase}$1"`)
         .replace(/src='(?!https?:\/\/)([^']+\.swf)'/gi, `src='${absoluteBase}$1'`);
+
       document.getElementById("gameFrame").srcdoc = patched;
     })
     .catch(() => {
-      document.getElementById("gameFrame").srcdoc = "<p style='color:red;font-family:monospace;padding:20px'>Failed to load game.</p>";
+      document.getElementById("gameFrame").srcdoc =
+        "<p style='color:red;font-family:monospace;padding:20px'>Failed to load game.</p>";
     });
-<!DOCTYPE html>
-<html>
- <style>
-    body{
-     font-family: FreeMono, monospace;
-     background: #3b3b3b;
-     margin: 0;
-     padding: 0;
-     box-sizing: border-box;
-    }
-  
-    .top{
-      background-color: #303030;
-      width: 100vw;
-      height: 75px;
-      color: White;
-      display: flex;
-      align-items: flex-start;
-    }
-    
-    .undertop {
-      background-color: #2d2d2d;
-      width: 100vw;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-    }
-    
-    .fullscreen, .download, .back {
-      background: #313131;
-      border: 3px solid #393939;
-      color: white;
-      height: 30px;
-      font-size: 17px;
-      border-radius: 10px;
-      transition: transform 0.15s ease, border 0.15s ease, background 0.15s ease;
-    }
 
-    .fullscreen { width: 110px; }
-    .download   { width: 110px; }
-    .back       { width: 100px; }
-    
-    .fullscreen:hover, .download:hover, .back:hover {
-      transform: scale(1.1);
-      border: 3px solid #424242;
-      background: #424242;
-      cursor: pointer;
+  document.getElementById("downloadBtn").addEventListener("click", async () => {
+    try {
+      const response = await fetch(gameUrl);
+      const html = await response.text();
+
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${gameName}.html`;
+
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download failed:", err);
     }
-    
-    .GameFrame{
-      width: 80vw;
-      height: 70vh;
-      display: block;
-      margin: 20px auto;
-      border-radius: 20px;
-      border: none;
-    }
-    
-  </style>
-  <body>
-      <div class="top">
-        <h1 class="Name" id="gameTitle">Loading...</h1>
-      </div>
-    
-      <div class="undertop">
-        <button class="download" id="downloadBtn">Download</button>
-        <button class="fullscreen" id="fullscreenBtn">Fullscreen</button>
-        <button class="back" onclick="history.back()">Back</button>
-      </div>
-    
-      <div class="gamesarea"></div>
-    
-      <iframe class="GameFrame" id="gameFrame" allowfullscreen></iframe>
-
-<script>
-  const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
-const params = new URLSearchParams(window.location.search);
-const gameName = params.get("game");
-if (gameName) {
-  document.title = gameName;
-  document.getElementById("gameTitle").textContent = gameName;
-  const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/index.html`;
-  fetch(gameUrl)
-    .then(res => res.text())
-    .then(html => {
-      const absoluteBase = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/`;
-      const patched = html
-        .replace(/src="(?!https?:\/\/)([^"]+\.swf)"/gi, `src="${absoluteBase}$1"`)
-        .replace(/src='(?!https?:\/\/)([^']+\.swf)'/gi, `src='${absoluteBase}$1'`);
-      document.getElementById("gameFrame").srcdoc = patched;
-    })
-    .catch(() => {
-      document.getElementById("gameFrame").srcdoc = "<p style='color:red;font-family:monospace;padding:20px'>Failed to load game.</p>";
-    });
-document.getElementById("downloadBtn").addEventListener("click", async () => {
-  try {
-    const response = await fetch(gameUrl);
-    const html = await response.text();
-
-    const blob = new Blob([html], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${gameName}.html`;
-    document.body.appendChild(a);
-    a.click();
-
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error("Download failed:", err);
-  }
-});
-} else {
-  document.getElementById("gameTitle").textContent = "No game selected";
-}
-document.getElementById("fullscreenBtn").addEventListener("click", () => {
-  const frame = document.getElementById("gameFrame");
-  if (frame.requestFullscreen) {
-    frame.requestFullscreen();
-  } else if (frame.webkitRequestFullscreen) {
-    frame.webkitRequestFullscreen();
-  } else if (frame.mozRequestFullScreen) {
-    frame.mozRequestFullScreen();
-  }
-});
-</script>
-  </body>
-</html>
+  });
 
 } else {
   document.getElementById("gameTitle").textContent = "No game selected";
 }
+
 document.getElementById("fullscreenBtn").addEventListener("click", () => {
   const frame = document.getElementById("gameFrame");
+
   if (frame.requestFullscreen) {
     frame.requestFullscreen();
   } else if (frame.webkitRequestFullscreen) {
