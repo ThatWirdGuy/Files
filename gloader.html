@@ -48,10 +48,19 @@
       transition: transform 0.15s ease, border 0.15s ease, background 0.15s ease;
     }
 
-    .fullscreen { width: 110px; }
-    .download   { width: 110px; }
-    .back       { width: 100px; }
+    .ogiab{
+      background: #313131;
+      border: 3px solid #393939;
+      color: white;
+      height: 60px;
+      font-size: 30px;
+      border-radius: 10px;
+    }
     
+    .fullscreen { width: 110px; }
+    .download { width: 110px; }
+    .back { width: 100px; }
+    .ogiab { width: 100vw; }
     .fullscreen:hover, .download:hover, .back:hover {
       transform: scale(1.1);
       border: 3px solid #424242;
@@ -84,59 +93,87 @@
 
   <iframe class="GameFrame" id="gameFrame" allowfullscreen></iframe>
 
-  <script>
-    const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
-    const params = new URLSearchParams(window.location.search);
-    const gameName = params.get("game");
+  <button class="ogiab">Open In about:blank</button>
+  
+<script>
+  const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
+  const params = new URLSearchParams(window.location.search);
+  
+  const gameName = params.get("game");
 
-    if (gameName) {
-        document.title = gameName;
-        document.getElementById("gameTitle").textContent = gameName;
+  let fetchedHtml = "";
 
-        const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/index.html`;
-
-        fetch(gameUrl)
-          .then(response => response.text())
-          .then(htmlCode => {
-              const frame = document.getElementById("gameFrame");
-              const frameDoc = frame.contentDocument || frame.contentWindow.document;
-              
-              frameDoc.open();
-              frameDoc.write(htmlCode);
-              frameDoc.close();
-          })
-          .catch(err => {
-              console.error("Error loading game code:", err);
-              document.getElementById("gameFrame").src = gameUrl;
-          });
-
-        document.getElementById("downloadBtn").addEventListener("click", () => {
-            const zipUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/${encodeURIComponent(gameName)}.zip`;
-
-            const a = document.createElement("a");
-            a.href = zipUrl;
-            a.download = `${gameName}.zip`;
-
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        });
-
-    } else {
-        document.getElementById("gameTitle").textContent = "No game selected";
+  function OpenInAboutBlank(code) {
+    if (!code) {
+      alert("Game content hasn't finished loading yet!");
+      return;
     }
 
-    document.getElementById("fullscreenBtn").addEventListener("click", () => {
-        const frame = document.getElementById("gameFrame");
+    const newWindow = window.open("about:blank", "_blank");
+    
+    if (newWindow) {
+      newWindow.document.open();
+      newWindow.document.write(code);
+      newWindow.document.close();
+    } else {
+      alert("Popup blocked! Please allow popups for this site.");
+    }
+  }
+  
+  if (gameName) {
+      document.title = gameName;
+      document.getElementById("gameTitle").textContent = gameName;
 
-        if (frame.requestFullscreen) {
-            frame.requestFullscreen();
-        } else if (frame.webkitRequestFullscreen) {
-            frame.webkitRequestFullscreen();
-        } else if (frame.mozRequestFullScreen) {
-            frame.mozRequestFullScreen();
-        }
-    });
-  </script>
+      const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/index.html`;
+
+      fetch(gameUrl)
+        .then(response => response.text())
+        .then(htmlCode => {
+            fetchedHtml = htmlCode;
+
+            const frame = document.getElementById("gameFrame");
+            const frameDoc = frame.contentDocument || frame.contentWindow.document;
+            
+            frameDoc.open();
+            frameDoc.write(htmlCode);
+            frameDoc.close();
+        })
+        .catch(err => {
+            console.error("Error loading game code:", err);
+            document.getElementById("gameFrame").src = gameUrl;
+        });
+
+      document.getElementById("downloadBtn").addEventListener("click", () => {
+          const zipUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/${encodeURIComponent(gameName)}.zip`;
+
+          const a = document.createElement("a");
+          a.href = zipUrl;
+          a.download = `${gameName}.zip`;
+
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+      });
+
+  } else {
+      document.getElementById("gameTitle").textContent = "No game selected";
+  }
+
+  document.getElementById("fullscreenBtn").addEventListener("click", () => {
+      const frame = document.getElementById("gameFrame");
+
+      if (frame.requestFullscreen) {
+          frame.requestFullscreen();
+      } else if (frame.webkitRequestFullscreen) {
+          frame.webkitRequestFullscreen();
+      } else if (frame.mozRequestFullScreen) {
+          frame.mozRequestFullScreen();
+      }
+  });
+
+  document.querySelector(".ogiab").addEventListener("click", () => {
+      OpenInAboutBlank(fetchedHtml);
+  });
+</script>
 </body>
 </html>
