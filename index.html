@@ -37,15 +37,7 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
-.games { width: 100px; }
-.pat { width: 200px; }
-
-.games.selected, .pat.selected {
-  text-decoration: underline;
-  font-weight: bold;
-}
-
+  
 .gamesarea {
   display: flex;
   flex-wrap: wrap;
@@ -101,8 +93,7 @@ body {
   </div>
 
   <div class="undertop">
-    <button class="games selected" onclick="Underline_Buttons(this)">Games</button>
-    <button class="pat" onclick="Underline_Buttons(this)">Played All Time</button>
+    
   </div>
 
   <div class="gamesarea" id="gamesArea"></div>
