@@ -28,22 +28,22 @@ body {
   gap: 20px;
 }
 
-.games {
+.games, .pat {
   background: none;
   border: none;
   color: white;
-  width: 100px;
   height: 20px;
   font-size: 17px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.pat {
-  background: none;
-  border: none;
-  color: white;
-  width: 200px;
-  height: 20px;
-  font-size: 17px;
+.games { width: 100px; }
+.pat { width: 200px; }
+
+.games.selected, .pat.selected {
+  text-decoration: underline;
+  font-weight: bold;
 }
 
 .gamesarea {
@@ -101,8 +101,8 @@ body {
   </div>
 
   <div class="undertop">
-    <button class="games">Games</button>
-    <button class="pat">Played All Time</button>
+    <button class="games selected" onclick="Underline_Buttons(this)">Games</button>
+    <button class="pat" onclick="Underline_Buttons(this)">Played All Time</button>
   </div>
 
   <div class="gamesarea" id="gamesArea"></div>
@@ -111,6 +111,14 @@ body {
 const API = "https://api.github.com/repos/ThatWirdGuy/Files/contents/g";
 const CDN_BASE = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main";
 const GLOADER_URL = "https://thatwirdguy.github.io/Files/gloader.html";
+
+function Underline_Buttons(clickedButton) {
+  const currentActive = document.querySelector('.undertop .selected');
+  if (currentActive) {
+    currentActive.classList.remove('selected');
+  }
+  clickedButton.classList.add('selected');
+}
 
 async function loadGames() {
   const res = await fetch(API);
