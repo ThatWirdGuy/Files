@@ -66,6 +66,7 @@
       margin: 20px auto;
       border-radius: 20px;
       border: none;
+      background: #1a1a1a;
     }
   </style>
 </head>
@@ -93,7 +94,21 @@
         document.getElementById("gameTitle").textContent = gameName;
 
         const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/index.html`;
-        document.getElementById("gameFrame").src = gameUrl;
+
+        fetch(gameUrl)
+          .then(response => response.text())
+          .then(htmlCode => {
+              const frame = document.getElementById("gameFrame");
+              const frameDoc = frame.contentDocument || frame.contentWindow.document;
+              
+              frameDoc.open();
+              frameDoc.write(htmlCode);
+              frameDoc.close();
+          })
+          .catch(err => {
+              console.error("Error loading game code:", err);
+              document.getElementById("gameFrame").src = gameUrl;
+          });
 
         document.getElementById("downloadBtn").addEventListener("click", () => {
             const zipUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/${encodeURIComponent(gameName)}.zip`;
