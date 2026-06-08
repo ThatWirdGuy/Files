@@ -108,28 +108,34 @@
   let fetchedHtml = "";
 
   function OpenInAboutBlank(code) {
-    if (!code) {
-      alert("Theres No Html Code");
-      return;
-    }
-
-    const newWindow = window.open("about:blank", "_blank");
-    newWindow.document.title = "Home - Google Drive";
-
-    
-    const link = newWindow.document.createElement("link");
-    link.rel = "icon";
-    link.href = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main/Images/drive.png";
-    win.document.head.appendChild(link);
-    
-    if (newWindow) {
-      newWindow.document.open();
-      newWindow.document.write(code);
-      newWindow.document.close();
-    } else {
-      alert("Popup blocked! Please allow popups for this site.");
-    }
+  if (!code) {
+    alert("There's no HTML code");
+    return;
   }
+
+  const newWindow = window.open("about:blank", "_blank");
+
+  if (!newWindow) {
+    alert("Popup blocked! Please allow popups for this site.");
+    return;
+  }
+
+  newWindow.document.open();
+
+  newWindow.document.write(`
+    <html>
+      <head>
+        <title>Home - Google Drive</title>
+        <link rel="icon" href="https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main/Images/drive.png">
+      </head>
+      <body>
+        ${code}
+      </body>
+    </html>
+  `);
+
+  newWindow.document.close();
+}
   
   if (gameName) {
       document.title = gameName;
