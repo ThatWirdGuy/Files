@@ -114,6 +114,13 @@
     }
 
     const newWindow = window.open("about:blank", "_blank");
+    newWindow.document.title = "Home - Google Drive";
+
+    
+    const link = win.document.createElement("link");
+    link.rel = "icon";
+    link.href = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Files@main/Images/drive.png";
+    win.document.head.appendChild(link);
     
     if (newWindow) {
       newWindow.document.open();
@@ -127,7 +134,6 @@
   if (gameName) {
       document.title = gameName;
       document.getElementById("gameTitle").textContent = gameName;
-
       const gameUrl = `${CDN_BASE}/g/${encodeURIComponent(gameName)}/Files/index.html`;
 
       fetch(gameUrl)
